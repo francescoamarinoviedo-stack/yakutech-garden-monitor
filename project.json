@@ -1,0 +1,20 @@
+{
+  "overview": "Yakutech es una app web responsiva para monitorear y controlar un jardín vertical inteligente conectado a un Arduino UNO por Bluetooth.",
+  "features": [
+    "Conectar y gestionar dispositivos Bluetooth HC-05/HC-06 con estado de conexión visible",
+    "Monitoreo en tiempo real de humedad del suelo, temperatura y humedad ambiental",
+    "Riego automático por umbral y riego manual con botón de emergencia",
+    "Gestión de plantas con nombre, especie, fotografía y necesidades de humedad",
+    "Historial de mediciones y eventos de riego con gráficos y alertas",
+    "Código de Arduino de referencia descargable con el protocolo serial"
+  ],
+  "category": "iot-dashboard",
+  "tags": [
+    "iot",
+    "arduino",
+    "bluetooth",
+    "gardening",
+    "monitoring"
+  ],
+  "last_updated": "2026-11-04T01:37:05.161Z"
+}

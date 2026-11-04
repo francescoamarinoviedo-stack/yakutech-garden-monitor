@@ -1,0 +1,276 @@
+type _ImmutableObjectStorageRefillResult = 
+ record {
+   success: opt bool;
+   topped_up_amount: opt nat;
+ };
+type _ImmutableObjectStorageRefillInformation = record {
+                                                  proposed_top_up_amount:
+                                                   opt nat;};
+type _ImmutableObjectStorageCreateCertificateResult = 
+ record {
+   blob_hash: text;
+   method: text;
+ };
+type Value = 
+ variant {
+   "bool": bool;
+   float: float64;
+   "int": int;
+   "nat": nat;
+   "null";
+   "text": text;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type Timestamp = int;
+type SensorPresence = 
+ variant {
+   absent;
+   present;
+ };
+type SensorFrame = 
+ record {
+   ambientHumidity: opt nat;
+   receivedAt: Timestamp;
+   soilMoisture: opt nat;
+   temperature: opt int;
+ };
+type Result__1 = 
+ variant {
+   err: Error;
+   ok;
+ };
+type Result = 
+ record {
+   hasMore: bool;
+   rows: vec vec Cell;
+ };
+type PlantView = 
+ record {
+   careRecommendations: vec text;
+   createdAt: Timestamp;
+   id: Id;
+   moistureNeed: nat;
+   name: text;
+   photoFileHash: opt text;
+   species: text;
+   status: text;
+ };
+type PlantStatus = 
+ variant {
+   healthy;
+   needsAttention;
+   needsWater;
+ };
+type Plant = 
+ record {
+   careRecommendations: vec text;
+   createdAt: Timestamp;
+   id: Id;
+   moistureNeed: nat;
+   name: text;
+   photoFileHash: opt text;
+   species: text;
+ };
+type PairedDevice = 
+ record {
+   address: text;
+   name: text;
+ };
+type Measurement = 
+ record {
+   ambientHumidity: opt nat;
+   ambientHumidityPresence: SensorPresence;
+   id: Id;
+   recordedAt: Timestamp;
+   soilMoisture: opt nat;
+   soilPresence: SensorPresence;
+   temperature: opt int;
+   temperaturePresence: SensorPresence;
+ };
+type LatestMeasurement = opt Measurement;
+type IrrigationOutcome = 
+ variant {
+   blocked;
+   completed;
+   connectionLost;
+   emergencyStop;
+   maxDurationReached;
+   stoppedManually;
+ };
+type IrrigationMode = 
+ variant {
+   automatic;
+   manual;
+ };
+type IrrigationEvent = 
+ record {
+   actuator: Actuator;
+   cause: IrrigationCause;
+   endedAt: opt Timestamp;
+   id: Id;
+   outcome: IrrigationOutcome;
+   startedAt: Timestamp;
+ };
+type IrrigationConfigView = 
+ record {
+   maxDurationSeconds: nat;
+   mode: IrrigationMode;
+   moistureThreshold: nat;
+ };
+type IrrigationCause = 
+ variant {
+   automatic;
+   emergency;
+   manual;
+ };
+type Id = nat;
+type HistoryPoint = 
+ record {
+   recordedAt: Timestamp;
+   soilMoisture: opt nat;
+   temperature: opt int;
+ };
+type FrameParseResult = 
+ variant {
+   malformed: text;
+   ok: SensorFrame;
+ };
+type Error = 
+ variant {
+   AmbiguousAttribute: record {
+                         field: text;
+                         sources: vec text;
+                       };
+   FrontendOriginMismatch: record {
+                             expected: vec text;
+                             got: text;
+                           };
+   FrontendOriginsNotConfigured;
+   MalformedCandid;
+   MissingField: text;
+   MixedSsoSources: record {
+                      otherKeys: vec text;
+                      ssoKeys: vec text;
+                    };
+   NoAttributes;
+   Stale: record {ageNs: nat;};
+   UnknownNonce;
+   UntrustedSsoSource: record {domain: text;};
+ };
+type ConnectionStatus = 
+ variant {
+   connected;
+   connecting;
+   disconnected;
+   lost;
+ };
+type Cell = 
+ record {
+   name: text;
+   value: Value;
+ };
+type AlertSeverity = 
+ variant {
+   critical;
+   info;
+   warning;
+ };
+type AlertKind = 
+ variant {
+   connectionLost;
+   plantNeedsWater: Id;
+   sensorFailure: text;
+ };
+type Alert = 
+ record {
+   acknowledged: bool;
+   createdAt: Timestamp;
+   id: Id;
+   kind: AlertKind;
+   message: text;
+   severity: AlertSeverity;
+ };
+type Actuator = 
+ variant {
+   none;
+   pump;
+   valve;
+ };
+service : {
+  _immutableObjectStorageBlobsAreLive: (hashes: vec blob) -> (vec bool) query;
+  _immutableObjectStorageBlobsToDelete: () -> (vec blob) query;
+  _immutableObjectStorageConfirmBlobDeletion: (blobs: vec blob) -> ();
+  _immutableObjectStorageCreateCertificate: (blobHash: text) ->
+   (_ImmutableObjectStorageCreateCertificateResult);
+  _immutableObjectStorageRefillCashier: (refillInformation:
+   opt _ImmutableObjectStorageRefillInformation) ->
+   (_ImmutableObjectStorageRefillResult);
+  _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
+  _initialize_access_control: () -> ();
+  _internet_identity_sign_in_finish: () -> (Result__1);
+  _internet_identity_sign_in_start: () -> (blob);
+  /// Mark an alert as acknowledged.
+  acknowledgeAlert: (id: nat) -> (bool);
+  /// Register a new plant with its name, species, photo and moisture need.
+  addPlant: (name: text, species: text, photoFileHash: opt text,
+   moistureNeed: nat, careRecommendations: vec text) -> (Plant);
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  /// Remove a plant by id.
+  deletePlant: (id: nat) -> (bool);
+  /// Mark the Bluetooth link as disconnected.
+  disconnectBluetooth: () -> ();
+  /// Trigger the emergency stop, halting any active irrigation.
+  emergencyStopIrrigation: () -> ();
+  execute: (qJson: text) -> (Result) query;
+  /// Read the current active actuator.
+  getActiveActuator: () -> (Actuator) query;
+  getApiDoc: () -> (text) query;
+  getCallerUserRole: () -> (UserRole) query;
+  /// Read the current Bluetooth connection status.
+  getConnectionStatus: () -> (ConnectionStatus) query;
+  /// Read moisture and temperature history points for charting.
+  getHistory: (limit: nat) -> (vec HistoryPoint) query;
+  /// Read the current irrigation configuration.
+  getIrrigationConfig: () -> (IrrigationConfigView) query;
+  /// Read the most recent measurement, or `null` when none exists.
+  getLatestMeasurement: () -> (LatestMeasurement) query;
+  /// Read the last paired Bluetooth device, if any.
+  getPairedDevice: () -> (opt PairedDevice) query;
+  /// Read a single plant with its current status.
+  getPlant: (id: nat) -> (opt PlantView) query;
+  /// Read the derived status of a plant from the latest measurement.
+  getPlantStatus: (plantId: nat) -> (PlantStatus) query;
+  isCallerAdmin: () -> (bool) query;
+  /// List recorded alerts, most recent first.
+  listAlerts: () -> (vec Alert) query;
+  /// Read recorded irrigation events, most recent first.
+  listIrrigationEvents: () -> (vec IrrigationEvent) query;
+  /// List all registered plants with their current status.
+  listPlants: () -> (vec PlantView) query;
+  /// Validate and parse a raw serial frame received from the Arduino.
+  parseSerialFrame: (raw: text) -> (FrameParseResult) query;
+  /// Store a validated sensor frame as a measurement.
+  recordMeasurement: (soilMoisture: opt nat, temperature: opt int,
+   ambientHumidity: opt nat) -> (Measurement);
+  /// Mark the Bluetooth link as lost after a communication timeout.
+  /// Stops any active irrigation and raises a connection-lost alert.
+  reportConnectionLost: () -> ();
+  schema: () -> (text) query;
+  /// Update the moisture threshold, max duration and mode.
+  setIrrigationConfig: (moistureThreshold: nat, maxDurationSeconds: nat,
+   mode: IrrigationMode) -> ();
+  /// Report the last paired Bluetooth device and mark the link connected.
+  setPairedDevice: (device: PairedDevice) -> ();
+  /// Start manual irrigation on the given actuator.
+  startManualIrrigation: (actuator: Actuator) -> ();
+  /// Stop any active irrigation.
+  stopIrrigation: () -> ();
+  /// Update an existing plant's details.
+  updatePlant: (id: nat, name: text, species: text, photoFileHash: opt text,
+   moistureNeed: nat, careRecommendations: vec text) -> (opt Plant);
+}

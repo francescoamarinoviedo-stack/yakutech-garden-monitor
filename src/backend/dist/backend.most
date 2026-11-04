@@ -1,0 +1,238 @@
+// Version: 4.0.0
+type AccessControlState__201339279 =
+  {
+    var adminAssigned : Bool;
+    userRoles : Map__230067015<Principal, UserRole__91647283>
+  };
+type Actuator__80252027 = {#none; #pump; #valve};
+type AlertKind__448600616 =
+  {#connectionLost; #plantNeedsWater : Id__528312956; #sensorFailure : Text};
+type AlertSeverity__133984990 = AlertSeverity__79636275;
+type AlertSeverity__79636275 = {#critical; #info; #warning};
+type Alert__151890435 =
+  {
+    acknowledged : Bool;
+    createdAt : Timestamp__345417707;
+    id : Id__528312956;
+    kind : AlertKind__448600616;
+    message : Text;
+    severity : AlertSeverity__133984990
+  };
+type ConnectionStatus__577337105 =
+  {#connected; #connecting; #disconnected; #lost};
+type Data__44217153<K, V> = {var count : Nat__227979830; kvs : [var ?(K, V)]};
+type Id__35051035 = Id__389469852;
+type Id__389469852 = Nat;
+type Id__390985264 = Id__389469852;
+type Id__528312956 = Id__389469852;
+type Id__729265306 = Id__389469852;
+type Internal__283199666<K, V> =
+  {children : [var ?Node__204828119<K, V>]; data : Data__44217153<K, V>};
+type IrrigationCause__846673802 = {#automatic; #emergency; #manual};
+type IrrigationEvent__588381570 =
+  {
+    actuator : Actuator__80252027;
+    cause : IrrigationCause__846673802;
+    endedAt : ?Timestamp__422309380;
+    id : Id__729265306;
+    outcome : IrrigationOutcome__667207941;
+    startedAt : Timestamp__422309380
+  };
+type IrrigationMode__781977069 = {#automatic; #manual};
+type IrrigationOutcome__667207941 =
+  {
+    #blocked;
+    #completed;
+    #connectionLost;
+    #emergencyStop;
+    #maxDurationReached;
+    #stoppedManually
+  };
+type Leaf__598469445<K, V> = {data : Data__44217153<K, V>};
+type List__355132335<T> =
+  {
+    var blockIndex : Nat__227979830;
+    var blocks : [var [var ?T]];
+    var elementIndex : Nat__227979830
+  };
+type List__836382695<T> = List__355132335<T>;
+type Map__230067015<K, V> = Map__405889023<K, V>;
+type Map__405889023<K, V> = Map__603270868<K, V>;
+type Map__603270868<K, V> =
+  {var root : Node__204828119<K, V>; var size : Nat__227979830};
+type Measurement__906216233 =
+  {
+    ambientHumidity : ?Nat;
+    ambientHumidityPresence : SensorPresence__316015392;
+    id : Id__390985264;
+    recordedAt : Timestamp__803012467;
+    soilMoisture : ?Nat;
+    soilPresence : SensorPresence__316015392;
+    temperature : ?Int;
+    temperaturePresence : SensorPresence__316015392
+  };
+type Nat__227979830 = Nat__920180692;
+type Nat__920180692 = Nat;
+type NewActor__769816496 =
+  {
+    accessControlState : AccessControlState__201339279;
+    alerts :
+      List__836382695<{
+                        acknowledged : Bool;
+                        createdAt : Int;
+                        id : Nat;
+                        kind :
+                          {
+                            #connectionLost;
+                            #plantNeedsWater : Nat;
+                            #sensorFailure : Text
+                          };
+                        message : Text;
+                        severity : {#critical; #info; #warning}
+                      }>;
+    bluetoothState :
+      {
+        var lastDevice : ?{address : Text; name : Text};
+        var lastSeenAt : ?Int;
+        var status : {#connected; #connecting; #disconnected; #lost}
+      };
+    counters :
+      {
+        var nextAlertId : Nat;
+        var nextEventId : Nat;
+        var nextMeasurementId : Nat;
+        var nextPlantId : Nat
+      };
+    irrigationConfig :
+      {
+        var maxDurationSeconds : Nat;
+        var mode : {#automatic; #manual};
+        var moistureThreshold : Nat
+      };
+    irrigationEvents :
+      List__836382695<{
+                        actuator : {#none; #pump; #valve};
+                        cause : {#automatic; #emergency; #manual};
+                        endedAt : ?Int;
+                        id : Nat;
+                        outcome :
+                          {
+                            #blocked;
+                            #completed;
+                            #connectionLost;
+                            #emergencyStop;
+                            #maxDurationReached;
+                            #stoppedManually
+                          };
+                        startedAt : Int
+                      }>;
+    irrigationState :
+      {
+        var active : {#none; #pump; #valve};
+        var emergencyStop : Bool;
+        var startedAt : ?Int
+      };
+    measurements :
+      List__836382695<{
+                        ambientHumidity : ?Nat;
+                        ambientHumidityPresence : {#absent; #present};
+                        id : Nat;
+                        recordedAt : Int;
+                        soilMoisture : ?Nat;
+                        soilPresence : {#absent; #present};
+                        temperature : ?Int;
+                        temperaturePresence : {#absent; #present}
+                      }>;
+    plants :
+      Map__230067015<Nat,
+                      {
+                        careRecommendations : [Text];
+                        createdAt : Int;
+                        id : Nat;
+                        moistureNeed : Nat;
+                        name : Text;
+                        photoFileHash : ?Text;
+                        species : Text
+                      }>
+  };
+type Node__204828119<K, V> =
+  {#internal : Internal__283199666<K, V>; #leaf : Leaf__598469445<K, V>};
+type OldActor__512397517 = {};
+type PairedDevice__63405092 = {address : Text; name : Text};
+type Plant__117398108 =
+  {
+    careRecommendations : [Text];
+    createdAt : Timestamp__555332898;
+    id : Id__35051035;
+    moistureNeed : Nat;
+    name : Text;
+    photoFileHash : ?Text;
+    species : Text
+  };
+type SensorPresence__316015392 = SensorPresence__946073008;
+type SensorPresence__946073008 = {#absent; #present};
+type Timestamp__260987432 = Timestamp__301639476;
+type Timestamp__301639476 = Int;
+type Timestamp__345417707 = Timestamp__301639476;
+type Timestamp__422309380 = Timestamp__301639476;
+type Timestamp__555332898 = Timestamp__301639476;
+type Timestamp__803012467 = Timestamp__301639476;
+type UserRole__91647283 = {#admin; #guest; #user};
+{
+  "00000000_000000" : OldActor__512397517 -> NewActor__769816496
+}
+actor  {
+  stable accessControlState :
+    {
+      var adminAssigned : Bool;
+      userRoles : Map__230067015<Principal, UserRole__91647283>
+    };
+  stable alerts :
+    {
+      var blockIndex : Nat__227979830;
+      var blocks : [var [var ?Alert__151890435]];
+      var elementIndex : Nat__227979830
+    };
+  stable bluetoothState :
+    {
+      var lastDevice : ?PairedDevice__63405092;
+      var lastSeenAt : ?Timestamp__260987432;
+      var status : ConnectionStatus__577337105
+    };
+  stable counters :
+    {
+      var nextAlertId : Nat;
+      var nextEventId : Nat;
+      var nextMeasurementId : Nat;
+      var nextPlantId : Nat
+    };
+  stable irrigationConfig :
+    {
+      var maxDurationSeconds : Nat;
+      var mode : IrrigationMode__781977069;
+      var moistureThreshold : Nat
+    };
+  stable irrigationEvents :
+    {
+      var blockIndex : Nat__227979830;
+      var blocks : [var [var ?IrrigationEvent__588381570]];
+      var elementIndex : Nat__227979830
+    };
+  stable irrigationState :
+    {
+      var active : Actuator__80252027;
+      var emergencyStop : Bool;
+      var startedAt : ?Timestamp__422309380
+    };
+  stable measurements :
+    {
+      var blockIndex : Nat__227979830;
+      var blocks : [var [var ?Measurement__906216233]];
+      var elementIndex : Nat__227979830
+    };
+  stable plants :
+    {
+      var root : Node__204828119<Nat, Plant__117398108>;
+      var size : Nat__227979830
+    }
+};
